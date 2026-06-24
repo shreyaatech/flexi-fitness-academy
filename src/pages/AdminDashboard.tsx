@@ -664,6 +664,34 @@ export default function AdminDashboard() {
     }
   };
 
+  const getWhatsAppMessage = (student: Student) => {
+    const name = student.name;
+    const pkg = student.package || 'membership';
+    const expiry = student.expiry_date;
+    const whatsapp = student.whatsapp_no || '';
+
+    if (!expiry) {
+      return `Hi ${name}! 👋\n\nThis is *Flexi Fitness Academy* 🏋️‍♀️\n\nJust checking in on your fitness journey! Let us know if you need any support or have questions about your training.\n\nKeep pushing! 💪\n\n– Flexi Fitness Academy\n📞 +91 80803 32877`;
+    }
+
+    const [year, month, day] = expiry.split('-').map(Number);
+    const expiryDate = new Date(year, month - 1, day);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    expiryDate.setHours(0, 0, 0, 0);
+    const diffDays = Math.ceil((expiryDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+
+    if (diffDays < 0) {
+      return `Hi ${name}! 👋\n\nThis is *Flexi Fitness Academy* 🏋️‍♀️\n\nWe noticed your *${pkg}* package expired on *${expiry}* (${Math.abs(diffDays)} days ago).\n\nWe'd love to have you back on your transformation journey! 🌟 Please renew your membership to continue your progress.\n\n💬 Reply to this message or call us to renew.\n📞 +91 80803 32877\n\n– Flexi Fitness Academy`;
+    } else if (diffDays === 0) {
+      return `Hi ${name}! 👋\n\nThis is *Flexi Fitness Academy* 🏋️‍♀️\n\n⚠️ Your *${pkg}* package *expires TODAY* (${expiry})!\n\nDon't let your progress stop here 💪 Renew now to keep crushing your goals!\n\n📞 +91 80803 32877\n\n– Flexi Fitness Academy`;
+    } else if (diffDays <= 7) {
+      return `Hi ${name}! 👋\n\nThis is *Flexi Fitness Academy* 🏋️‍♀️\n\n⏳ Friendly reminder — your *${pkg}* package expires in just *${diffDays} day${diffDays === 1 ? '' : 's'}* on *${expiry}*.\n\nRenew now to keep your transformation on track and avoid any break in your journey! 🌟\n\n📞 +91 80803 32877\n\n– Flexi Fitness Academy`;
+    } else {
+      return `Hi ${name}! 👋\n\nThis is *Flexi Fitness Academy* 🏋️‍♀️\n\nJust checking in on your fitness journey! 💪 Your *${pkg}* package is active until *${expiry}* (${diffDays} days remaining).\n\nKeep up the amazing work and stay consistent! Let us know if you need any guidance.\n\n📞 +91 80803 32877\n\n– Flexi Fitness Academy`;
+    }
+  };
+
   const handleLogout = () => {
     sessionStorage.removeItem('adminAuth');
     navigate('/login');
@@ -970,7 +998,7 @@ export default function AdminDashboard() {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        const message = `Hello ${student.name}, this is Flexi Fitness Academy. Just a reminder that your ${student.package} package expires on ${student.expiry_date || 'N/A'}. Please let us know if you would like to renew!`;
+                        const message = getWhatsAppMessage(student);
                         window.open(`https://wa.me/${student.whatsapp_no.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`, '_blank');
                       }}
                       className={`p-1.5 rounded-lg transition-all ${
@@ -1253,7 +1281,7 @@ export default function AdminDashboard() {
                 {selectedStudent.whatsapp_no && (
                   <button 
                     onClick={() => {
-                      const message = `Hello ${selectedStudent.name}, this is Flexi Fitness Academy. Just checking in on your transformation progress. Your membership is active until ${selectedStudent.expiry_date || 'N/A'}. Let us know if you need any workout adjustments!`;
+                      const message = getWhatsAppMessage(selectedStudent);
                       window.open(`https://wa.me/${selectedStudent.whatsapp_no.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`, '_blank');
                     }}
                     className="bg-green-500/10 border border-green-500/25 p-3 rounded-2xl hover:bg-green-500 hover:text-white transition-all group flex items-center justify-center"
@@ -2165,7 +2193,7 @@ export default function AdminDashboard() {
                           {student.whatsapp_no && (
                             <button
                               onClick={() => {
-                                const message = `Hello ${student.name}, hope your workouts are going well! This is Flexi Fitness Academy checking in. Let us know if you need to review your transformation charts!`;
+                                const message = getWhatsAppMessage(student);
                                 window.open(`https://wa.me/${student.whatsapp_no.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`, '_blank');
                               }}
                               className="p-2.5 bg-green-500/10 border border-green-500/25 hover:bg-green-500 hover:text-white rounded-xl text-green-400 transition-all"
