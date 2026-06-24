@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Flexi Academy – Ladies Fitness</title>
+    <meta name="description" content="Flexi Academy Ladies Fitness – Your premium women's fitness studio. Track workouts, measurements, and nutrition." />
+    <meta name="theme-color" content="#D4AF37" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Flexi Academy" />
+    <link rel="icon" type="image/png" href="/logo.png" />
+    <link rel="apple-touch-icon" href="/logo.png" />
+    <script>
+      // Fix for "Uncaught TypeError: Cannot set property fetch of #<Window> which has only a getter"
+      // Some libraries (like react-router v7 instrumentation) try to assign to window.fetch.
+      // We make it writable by defining a setter to allow this. This must be at the very top.
+      if (typeof window !== 'undefined' && window.fetch) {
+        (function() {
+          var currentFetch = window.fetch;
+          try {
+            Object.defineProperty(window, 'fetch', {
+              get: function() { return currentFetch; },
+              set: function(v) { currentFetch = v; },
+              configurable: true,
+              enumerable: true
+            });
+          } catch (e) {
+            console.warn('Could not make window.fetch writable:', e);
+          }
+        })();
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+
